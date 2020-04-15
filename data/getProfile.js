@@ -22,7 +22,8 @@ export default function getProfile(slugId) {
             pipeline: [
               {
                 $match: {
-                  $expr: { $eq: ['$authorId', '$$userId'] }
+                  $expr: { $eq: ['$authorId', '$$userId'] },
+                  removed: null
                 }
               },
               {

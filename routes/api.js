@@ -4,6 +4,7 @@ import findOneQuery from '../data/findOneQuery';
 import createUser from '../data/createUser';
 import { generateToken } from '../authenticate';
 import stripPrivateUserData from '../utils/stripPrivateUserData';
+import { validateNewUserData } from '../utils/userUtils';
 import postRouter from './post';
 import profileRouter from './profile';
 import reportsRouter from './reports';
@@ -51,10 +52,12 @@ router.post('/signup', async (req, res) => {
 
     const userData = req.body;
 
+    const validated = validateNewUserData(userData);
+    if (!validated) return res.status(400).send();
     const newUser = await createUser(userData); // Customer
     const token = generateToken(newUser);
-
-    return res.json({ user: stripPrivateUserData(userData), token });
+    console.log('newuser', newUser);
+    return res.json({ user: stripPrivateUserData(newUser), token });
   } catch (e) {
     console.log(e);
     return res.status(500).send('Error');

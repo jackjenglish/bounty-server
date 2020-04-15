@@ -42,6 +42,8 @@ export default function getReports(type) {
             reason: 1,
             text: 1,
             subject: 1,
+            type: 1,
+            actionTaken: 1,
             'reportAuthor.name': 1,
             'reportAuthor._id': 1,
             'reportAuthor.slugId': 1,

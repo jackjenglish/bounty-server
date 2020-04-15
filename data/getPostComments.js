@@ -9,7 +9,7 @@ export default function getPostComments(postSlugId, userId) {
       const collection = client.db('bounty').collection('comments');
 
       const pipeline = [
-        { $match: { postSlugId } },
+        { $match: { postSlugId, removed: null } },
         {
           $lookup: {
             from: 'users',

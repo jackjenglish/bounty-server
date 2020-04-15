@@ -11,11 +11,15 @@ const createUserObject = data => {
       if (err) return reject('Hashing Error');
 
       return resolve({
-        firstName: data.firstName,
-        lastName: data.lastName,
+        name: data.name,
         email: data.email,
         password: hashedPassword,
-        slugId
+        slugId,
+        balance: 0,
+        bio: '',
+        education: '',
+        employment: '',
+        profileImgSrc: null
       });
     });
   });

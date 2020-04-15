@@ -1,21 +1,18 @@
 import express from 'express';
-import bcrypt from 'bcrypt-nodejs';
 import { ObjectID } from 'mongodb';
 import crypto from 'crypto';
 import findOneQuery from '../data/findOneQuery';
-import createUser from '../data/createUser';
 import insertOne from '../data/insertOne';
-import { generateToken, isAuthenticated } from '../authenticate';
-import stripPrivateUserData from '../utils/stripPrivateUserData';
+import { isAuthenticated } from '../authenticate';
 import getPosts from '../data/getPosts';
 import getPost from '../data/getPost';
 import getPostComments from '../data/getPostComments';
 import updateQuery from '../data/updateQuery';
 import deleteOne from '../data/deleteOne';
 import upsertOne from '../data/upsertOne';
-import getProfile from '../data/getProfile';
 import getProfileBalance from '../data/getProfileBalance';
 import { transferBalance } from '../data/transferBalance';
+import findQuery from '../data/findQuery';
 
 const router = express.Router();
 
@@ -36,12 +33,13 @@ router.post('/posts', async (req, res) => {
 
 router.post('/submit-post', isAuthenticated, async (req, res) => {
   try {
-    const { title, description, value } = req.body;
+    const { title, description, value, topics } = req.body;
     const slugId = crypto.randomBytes(5).toString('hex');
     const newPost = {
       title,
       description,
       value,
+      topics: topics.map(topicId => ObjectID(topicId)),
       currency: 'USD',
       authorId: ObjectID(req.user._id),
       slugId
@@ -283,5 +281,15 @@ router.get(
     }
   }
 );
+
+router.get('/topics', async (req, res) => {
+  try {
+    const data = await findQuery('topics', {});
+    return res.json(data);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send();
+  }
+});
 
 export default router;

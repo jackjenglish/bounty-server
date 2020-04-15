@@ -9,12 +9,21 @@ export default function getPosts(userId) {
       const collection = client.db('bounty').collection('posts');
 
       const pipeline = [
+        { $match: { removed: null } },
         {
           $lookup: {
             from: 'users',
             localField: 'authorId',
             foreignField: '_id',
             as: 'author'
+          }
+        },
+        {
+          $lookup: {
+            from: 'topics',
+            localField: 'topics',
+            foreignField: '_id',
+            as: 'topics'
           }
         }
       ];
@@ -52,10 +61,11 @@ export default function getPosts(userId) {
             currency: 1,
             value: 1,
             slugId: 1,
-            topic: 1,
+            topics: 1,
             acceptedReply: 1,
             upvoted: { $arrayElemAt: ['$upvoted', 0] },
             score: 1,
+            commentCount: 1,
             'author.name': 1,
             'author._id': 1,
             'author.slugId': 1,

@@ -4,7 +4,6 @@ import getProfileBalance from '../data/getProfileBalance';
 import { isAuthenticated } from '../authenticate';
 import { ObjectID } from 'mongodb';
 import updateQuery from '../data/updateQuery';
-import insertOne from '../data/insertOne';
 import multer from 'multer';
 import mime from 'mime';
 import crypto from 'crypto';
@@ -18,7 +17,7 @@ const storage = multer.diskStorage({
     const fileName = `${randString}.${mime.getExtension(file.mimetype)}`;
     console.log('fileName', fileName);
     cb(null, fileName);
-  }
+  },
 });
 
 const upload = multer({ storage });
@@ -34,7 +33,7 @@ router.post('/profile/edit', isAuthenticated, async (req, res) => {
     }
 
     const query = {
-      _id: ObjectID(req.user._id)
+      _id: ObjectID(req.user._id),
     };
 
     const permittedUpdateFields = [
@@ -42,7 +41,7 @@ router.post('/profile/edit', isAuthenticated, async (req, res) => {
       'bio',
       'education',
       'employment',
-      'balance'
+      'balance',
     ];
 
     const update = { $set: {} };
@@ -105,13 +104,13 @@ router.post(
       const profileImgSrc = `\\${req.file.path}`;
 
       const query = {
-        _id: ObjectID(req.user._id)
+        _id: ObjectID(req.user._id),
       };
 
       const update = {
         $set: {
-          profileImgSrc
-        }
+          profileImgSrc,
+        },
       };
 
       await updateQuery('users', query, update);
@@ -123,34 +122,5 @@ router.post(
     }
   }
 );
-
-router.post('/submit-report', isAuthenticated, async (req, res) => {
-  try {
-    const {
-      reportType,
-      reportReason,
-      reportText,
-      subjectId,
-      subjectAuthorId
-    } = req.body;
-
-    const report = {
-      type: reportType,
-      reason: reportReason,
-      text: reportText,
-      reportAuthorId: ObjectID(req.user._id),
-      subjectId: ObjectID(subjectId),
-      subjectAuthorId: ObjectID(subjectAuthorId)
-    };
-
-    console.log('submit-report', report);
-
-    const data = await insertOne('reports', report);
-    return res.json(data);
-  } catch (e) {
-    console.log(e);
-    return res.status(500).send();
-  }
-});
 
 export default router;
