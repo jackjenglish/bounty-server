@@ -2,7 +2,7 @@ import { getClient } from '../mongo';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt-nodejs';
 
-const createUserObject = data => {
+const createUserObject = (data) => {
   return new Promise((resolve, reject) => {
     const slugId = crypto.randomBytes(5).toString('hex');
 
@@ -19,7 +19,8 @@ const createUserObject = data => {
         bio: '',
         education: '',
         employment: '',
-        profileImgSrc: null
+        profileImgSrc: null,
+        userType: 'moderator',
       });
     });
   });

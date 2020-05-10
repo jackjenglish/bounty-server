@@ -1,34 +1,18 @@
 import jwt from 'jsonwebtoken';
 
-/*export const login = (email, password) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const customer = await findOneQuery('users', { email });
-
-      bcrypt.compare(password, customer.password, (err, match) => {
-        if (err) return reject('Hash Compare Error');
-        if (!match) {
-          return reject('Invalid Credentials');
-        }
-        const cleanCustomer = cust//cleanRestaurantData(customer);
-        return resolve(cleanCustomer);
-      });
-    } catch (e) {
-      return reject('Failed to fetch Customer');
-    }
-  });
-};*/
-
-export const generateToken = user => {
+export const generateToken = (user) => {
   const tokenPayload = {
     email: user.email,
     name: user.name,
+    userType: user.userType,
     slugId: user.slugId,
-    _id: user._id
+    _id: user._id,
   };
 
+  if (!user.userType) tokenPayload.userType = 'moderator';
+
   const token = jwt.sign(tokenPayload, 'jack', {
-    expiresIn: 60 * 60 * 24 * 7
+    expiresIn: 60 * 60 * 24 * 7,
   });
 
   return token;
